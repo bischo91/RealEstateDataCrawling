@@ -7,14 +7,6 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 
 <!-- PROJECT LOGO -->
 <br />
@@ -33,12 +25,8 @@
     <br />
     <a href="https://github.com/bischo91/RealEstateDataCrawling">View Demo</a>
     ·
-<!--     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a> -->
   </p>
 </p>
-
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
@@ -85,20 +73,6 @@ To obtain data, zillow_scrape_v1.py was run almost everyday since 2020/09/20. Th
 
 The example database does not include all the data due to the large size of the file.
 
-The data can be visualized in serveral ways. The database has more information than what the current version of visualization graphs present, which can be found manually.
-
-Date vs Trend
-* Date
-  When 'Date' is selected, the plot presents data based on a single date selected.
-  Scatter vs Bar
-  * 'Scatter' plots all the data points on the selected 'Date'
-  * 'Bar' shows the average and standard deviation of Y data
-  Y-axis can be either 'Price' [USD] or 'Price/sqft' [USD/sqft]
-  X-axis can be 'bds' (=number of bedrooms), 'ba' (=number of bathrooms), 'location' (=NW/SW/NE/SE/Unknown), 'sqft' (=total sqft of the property) 
-  
-* Trend
-  For 'Trend', Y-axis can be the average 'Price' or 'Price/sqft', and X-axis is the range of the selected date.
-  The trend has a legend based on the location, or average of all.
 
 
 
@@ -149,6 +123,20 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
+The data can be visualized in serveral ways. The database has more information than what the current version of visualization graphs present, which can be found manually.
+
+Date vs Trend
+* Date
+  When 'Date' is selected, the plot presents data based on a single date selected.
+  Scatter vs Bar
+  * 'Scatter' plots all the data points on the selected 'Date'
+  * 'Bar' shows the average and standard deviation of Y data
+  Y-axis can be either 'Price' [USD] or 'Price/sqft' [USD/sqft]
+  X-axis can be 'bds' (=number of bedrooms), 'ba' (=number of bathrooms), 'location' (=NW/SW/NE/SE/Unknown), 'sqft' (=total sqft of the property) 
+  
+* Trend
+  For 'Trend', Y-axis can be the average 'Price' or 'Price/sqft', and X-axis is the range of the selected date.
+  The trend has a legend based on the location, or average of all.
 
 
 <!-- ROADMAP -->

@@ -303,7 +303,7 @@ plot_frame.grid(column = 2, row = 2)
 msg_content = Label(window, text = '', width = 100, anchor = 'w')
 msg_content.place(relx=0.1, rely=0.8)
 # SQL Data Connection
-con = sqlite3.connect("D:/Database/real_estate_database.db")
+con = sqlite3.connect("./real_estate_database_example.db")
 cursor = con.cursor()
 # Initialize Date
 today_date = datetime.date.today()
