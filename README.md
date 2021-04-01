@@ -73,27 +73,42 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-The main goal of the project is to see the trend of housing market in a specific city by extrating data from the seller's posts on Zillow website.
+The goal of the project is to comprehend the trend of housing market in a specific city by visualizing data extracted from the seller's posts on Zillow website.
+
 The project consists of three files:
 
-* Web crawling from Zillow website
-* Example SQL file
-* Visualization of the SQL file
+* Web crawling from Zillow website (zillow_scrape_v1.py)
+* Database file as an example      (real_estate_database_example.db)
+* Visualization of the database    (data_visualizer_v1.py)
+
+To obtain data, zillow_scrape_v1.py was run almost everyday since 2020/09/20. The python file was run using the Task Scheduler App. Some data are missing because CAPTCHA was triggered. This has been improved by randmoly allocating wait time between pages. However, the automation and web crawling can be further improved.
+
+The example database does not include all the data due to the large size of the file.
+
+The data can be visualized in serveral ways. The database has more information than what the current version of visualization graphs present, which can be found manually.
+
+Date vs Trend
+* Date
+  When 'Date' is selected, the plot presents data based on a single date selected.
+  Scatter vs Bar
+  * 'Scatter' plots all the data points on the selected 'Date'
+  * 'Bar' shows the average and standard deviation of Y data
+  Y-axis can be either 'Price' [USD] or 'Price/sqft' [USD/sqft]
+  X-axis can be 'bds' (=number of bedrooms), 'ba' (=number of bathrooms), 'location' (=NW/SW/NE/SE/Unknown), 'sqft' (=total sqft of the property) 
+  
+* Trend
+  For 'Trend', Y-axis can be the average 'Price' or 'Price/sqft', and X-axis is the range of the selected date.
+  The trend has a legend based on the location, or average of all.
 
 
 
 ### Built With
 
-This project is mainly built with Python. The packages used in Python includes:
-* d
-* d
-
-
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
-
+This project is mainly built with Python.
+* [Python] (https://www.python.org/)
+* [MySQL] (https://www.mysql.com/)
+* [ChromeDriver] (https://chromedriver.chromium.org/)
+* [Atom] (https://atom.io/)
 
 
 <!-- GETTING STARTED -->
@@ -103,7 +118,7 @@ This
 
 ### Prerequisites
 
-This 
+Prerequi
 * npm
   ```sh
   npm install npm@latest -g
