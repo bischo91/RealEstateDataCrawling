@@ -128,6 +128,35 @@ def append_all_data(start_date, end_date):
     return price_list, pricepersqft_list, bds_list, ba_list, sqft_list, \
             link_list, updated_on_list, location_list
 
+def create_X_matrix(bds, ba, sqft):
+    sqft = (np.array(sqft)/1000).tolist()
+    x0 = np.ones(len(price))
+    X = np.transpose(np.array([x0, sqft, bds, ba]))
+    return X
+
+def normal_equation(X, price):
+    Y = np.transpose(np.array(price))
+
+    inv_XtX = np.linalg.inv(np.transpose(X).dot(X))
+    theta = (inv_XtX.dot(np.transpose(X))).dot(Y)
+    return theta
+
+def price_pred(theta, X):
+    h = np.dot(theta, X)
+    return h
+
+def cost_function(theta, X, price):
+    m = len(price)
+    print(m)
+    Y = np.transpose(np.array(price))
+    sum_J = 0
+    for i in range(0, m):
+        h = price_pred(theta,X[i])
+        diff = (h-Y[i])**2
+        sum_J += diff
+    print(sum_J)
+    J = (1/(2*m))*sum_J
+    return J
 
 con = sqlite3.connect("D:/Database/real_estate_database.db")
 cursor = con.cursor()
@@ -154,40 +183,15 @@ sqft = data[4]
 
 # shorten data length for test
 
-def create_X_matrix(bds, ba, sqft):
-    sqft = (np.array(sqft)/1000).tolist()
-    x0 = np.ones(len(price))
-    X = np.transpose(np.array([x0, sqft, bds, ba]))
-    return X
 
-
-def normal_equation(X, price):
-    Y = np.transpose(np.array(price))
-
-    inv_XtX = np.linalg.inv(np.transpose(X).dot(X))
-    theta = (inv_XtX.dot(np.transpose(X))).dot(Y)
-    return theta
 
 X = create_X_matrix(bds,ba,sqft)
 theta = normal_equation(X, price)
 
-def price_pred(theta, X):
-    h = np.dot(theta, X)
-    return h
 
 
-def cost_function(theta, X, price):
-    m = len(price)
-    print(m)
-    Y = np.transpose(np.array(price))
-    sum_J = 0
-    for i in range(0, m):
-        h = price_pred(theta,X[i])
-        diff = (h-Y[i])**2
-        sum_J += diff
-    print(sum_J)
-    J = (1/(2*m))*sum_J
-    return J
+
+
 print(cost_function(theta, X, price))
 
 price_pred_list=[]
