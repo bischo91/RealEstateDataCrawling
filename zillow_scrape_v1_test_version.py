@@ -105,9 +105,8 @@ def price2data(price):
         return 0, est
 
 def extract_and_store_data():
-
     url ='https://www.zillow.com/homes/for_sale/gainesville-fl/'
-    url = 'https://www.zillow.com/homedetails/3330-NW-31st-Ave-Gainesville-FL-32605/42709451_zpid/'
+    url = 'https://www.zillow.com/homedetails/1790-NW-34th-St-Gainesville-FL-32605/87624841_zpid/'
     soup = url_opener(url)
     house_details = soup.find("ul", class_='ds-home-fact-list')
     # house_details = house_details.find_all('li',{"class": "ds-home-fact-list"})
@@ -116,6 +115,7 @@ def extract_and_store_data():
     type, year_built, heating, cooling, parking, hoa = '','','','','',''
     for i in house_details:
         element = i.text
+        print(element)
         element_list = element.split(':')
         # element_list[0]
         if element_list[0].lower() == 'type':
@@ -129,7 +129,7 @@ def extract_and_store_data():
         elif element_list[0].lower() == 'parking':
             parking = element_list[1]
         elif element_list[0].lower() == 'hoa':
-            hoa = element_list[1].replace('$','').replace(',','')
+            hoa = element_list[1].replace('$','').replace(',','')  # WHAT ABOUT HOA MONTHLY YEARLY QUARTERLY ETC?
     print(type)
     print(year_built)
     print(heating)

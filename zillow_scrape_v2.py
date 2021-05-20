@@ -116,21 +116,20 @@ def extract_and_store_data():
     cursor = con.cursor()
     while not cursor.fetchone():
         i -= 1
-
         prev_date = str(datetime.date.today() + datetime.timedelta(days = i)).replace('-','')
-        # prev_date = str(datetime.date(2021,2,20)).replace('-','')
+        # prev_date = today_date # This
         table_name = "real_estate_" + prev_date
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table_name + "'")
-
     cursor.execute("select * from " + table_name)
     rows = cursor.fetchall()
     con_new = sqlite3.connect("D:/Database/real_estate_database.db")
     cursor_new = con_new.cursor()
     table_new = "real_estate_" + today_date
-    cursor_new.execute("drop table if exists " + table_new)
-    cursor_new.execute("create table " + table_new + "(price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price)")
-    # cursor_new.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table_new + "'")
-    sql = 'insert into ' + table_name + ' values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    
+    cursor_new.execute("drop table if exists " + table_new) # create this
+    cursor_new.execute("create table " + table_new + "(price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price)") # create this
+
+    cursor_new.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table_new + "'")
     sql_new = 'insert into ' + table_new + ' values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     for row in rows:
@@ -182,7 +181,6 @@ def extract_and_store_data():
                     cooling = rows[j][10]
                     parking = rows[j][11]
                     hoa = rows[j][12]
-                    # cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, date_today, ''))
                 else:
                     bds, ba, sqft, acres, property = detailstr2data(details)
                     if est == True:
@@ -191,62 +189,60 @@ def extract_and_store_data():
                         est = ''
                     time.sleep(random.random()*10+random.random()*(random.random()*10))
                     soup_house = url_opener(house_url)
-                    labellist =[]
-                    valuelist =[]
-                    factlabel_span = soup_house.find_all("span", {"class":"ds-home-fact-label"})
-                    factvalue_span = soup_house.find_all("span", {"class":"ds-home-fact-value"})
-                    type = ''
-                    year = 0
-                    heating = ''
-                    cooling = ''
-                    parking = 0
-                    hoa = 0
+                    soup_house = soup_house.find("ul", class_='ds-home-fact-list')
+                    soup_house = soup_house.find_all("li")
+                    type, year, heating, cooling, parking, hoa = '', '', '', '', '', 0
                     prev_price = ''
                     last_price_change = today_date
-                    for span in factlabel_span:
-                        label = span.text
-                        labellist.append(label)
-                    for span in factvalue_span:
-                        value = span.text
-                        valuelist.append(value)
-                    for label_text in labellist:
-                        i = labellist.index(label_text)
-                        if 'type' in label_text.lower():
+                    for house_detail in soup_house:
+                        detail = house_detail.text
+                        detail_list = detail.split(':')
+                        if detail_list[0].lower() == 'type':
                             try:
-                                type = valuelist[i].lower()
+                                type = detail_list[1]
                             except ValueError:
                                 type = ''
-                        elif 'year built' in label_text.lower():
+                        elif detail_list[0].lower() == 'year built':
                             try:
-                                year = int(valuelist[i])
+                                year = int(detail_list[1])
                             except ValueError:
                                 year = ''
-                        elif 'heating' in label_text.lower():
+                        elif detail_list[0].lower() == 'heating':
                             try:
-                                heating = valuelist[i].lower()
+                                heating = detail_list[1]
                             except ValueError:
                                 heating = ''
-                        elif 'cooling' in label_text.lower():
+                        elif detail_list[0].lower() == 'cooling':
                             try:
-                                cooling = valuelist[i].lower()
+                                cooling = detail_list[1]
                             except ValueError:
                                 cooling = ''
-                        elif 'parking' in label_text.lower():
-                            parking= valuelist[i]
+                        elif detail_list[0].lower() == 'parking':
                             try:
-                                parking = int(''.join(j for j in parking if j.isdigit()))
+                                parking = detail_list[1]
                             except ValueError:
-                                parking = valuelist[i]
-                        elif 'hoa' in label_text.lower():
-                            hoa = valuelist[i]
+                                parking = ''
+                        elif detail_list[0].lower() == 'hoa':
                             try:
-                                hoa = int(''.join(j for j in hoa if j.isdigit()))
+                                hoa = detail_list[1].replace('$','').replace(',','')
+                                hoa = hoa.lower()
+                                if 'monthly' in hoa:
+                                    hoa = float(hoa.replace('monthly',''))*12
+                                elif 'quarterly' in hoa:
+                                    hoa = float(hoa.replace('quarterly', ''))*4
+                                elif 'annually' in hoa:
+                                    hoa = float(hoa.replace('annually', ''))
+                                elif 'semi-annually' in hoa:
+                                    hoa = float(hoa.replace('semi-annually', ''))
+                                elif 'yearly' in hoa:
+                                    hoa = float(hoa.replace('yearly', ''))
                             except ValueError:
-                                hoa = valuelist[i]
-                    cursor.execute(sql, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
-                con.commit()
+                                hoa = 0
+                    print(house_url)
                 cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
-                con_new.commit()
+                con_new.commit()  # MOVE THIS OUT OF ELSE:
+                # cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
+                # con_new.commit()
             next_pg = soup.find("a", attrs={"title": "Next page"})['href']
 
         print(pages)
