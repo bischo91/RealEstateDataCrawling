@@ -42,7 +42,6 @@ def url_opener(url):
         driver.quit()
         return soup
 
-
 def list_page_urls(pages, url):
     page_list = []
     for page in pages:
@@ -54,7 +53,6 @@ def list_page_urls(pages, url):
         pages.append(str(pg))
         page_urls.append(url + str(pg) + "_p")
     return page_urls
-
 
 def detailstr2data(detail):
     detail = detail.replace(',','')
@@ -125,10 +123,9 @@ def extract_and_store_data():
     con_new = sqlite3.connect("D:/Database/real_estate_database.db")
     cursor_new = con_new.cursor()
     table_new = "real_estate_" + today_date
-    
+
     cursor_new.execute("drop table if exists " + table_new) # create this
     cursor_new.execute("create table " + table_new + "(price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price)") # create this
-
     cursor_new.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table_new + "'")
     sql_new = 'insert into ' + table_new + ' values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
@@ -141,6 +138,7 @@ def extract_and_store_data():
     if soup != None:
         pages = []
         current_pg = 'invalid'
+        # current_pg = '_p2'
         next_pg = ''
         while next_pg != current_pg:
             current_pg = next_pg
@@ -153,6 +151,7 @@ def extract_and_store_data():
             soup = url_opener(url_pg)
             for element in soup.find_all(class_='list-card'):
                 house_url = element.find("a", class_='list-card-link')
+                # print(house_url)
                 house_url = house_url['href']
                 price = element.select_one('.list-card-price').text
                 price, est = price2data(price)
