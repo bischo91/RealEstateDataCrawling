@@ -152,7 +152,12 @@ def extract_and_store_data():
             for element in soup.find_all(class_='list-card'):
                 house_url = element.find("a", class_='list-card-link')
                 # print(house_url)
-                house_url = house_url['href']
+                try:
+                    house_url = house_url['href']
+                except TypeError:
+                    print('URL not found for' + house_url)
+                    break
+                # house_url = house_url['href']
                 price = element.select_one('.list-card-price').text
                 price, est = price2data(price)
                 new_price = price
