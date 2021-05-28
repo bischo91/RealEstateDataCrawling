@@ -155,7 +155,8 @@ def extract_and_store_data():
                 try:
                     house_url = house_url['href']
                 except TypeError:
-                    print('URL not found for' + house_url)
+                    print('URL not found')
+                    print(house_rul)
                     break
                 # house_url = house_url['href']
                 price = element.select_one('.list-card-price').text
@@ -192,9 +193,14 @@ def extract_and_store_data():
                     else:
                         est = ''
                     time.sleep(random.random()*10+random.random()*(random.random()*10))
-                    soup_house = url_opener(house_url)
-                    soup_house = soup_house.find("ul", class_='ds-home-fact-list')
-                    soup_house = soup_house.find_all("li")
+                    try:
+                        soup_house = url_opener(house_url)
+                        soup_house = soup_house.find("ul", class_='ds-home-fact-list')
+                        soup_house = soup_house.find_all("li")
+                    except:
+                        print('URL error for:')
+                        print(house_url)
+                        # break
                     type, year, heating, cooling, parking, hoa = '', '', '', '', '', 0
                     prev_price = ''
                     last_price_change = today_date
