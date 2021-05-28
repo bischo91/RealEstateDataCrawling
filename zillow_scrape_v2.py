@@ -156,7 +156,7 @@ def extract_and_store_data():
                     house_url = house_url['href']
                 except TypeError:
                     print('URL not found')
-                    print(house_rul)
+                    print(house_url)
                     break
                 # house_url = house_url['href']
                 price = element.select_one('.list-card-price').text
