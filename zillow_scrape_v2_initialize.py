@@ -117,14 +117,17 @@ def extract_and_store_data():
     while not cursor.fetchone():
         i -= 1
         prev_date = str(datetime.date.today() + datetime.timedelta(days = i)).replace('-','')
-        prev_date = today_date # This
+        # prev_date = today_date # This
+        prev_date = "20210715"
         table_name = "real_estate_" + prev_date
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table_name + "'")
     cursor.execute("select * from " + table_name)
     rows = cursor.fetchall()
     con_new = sqlite3.connect("D:/Database/real_estate_database.db")
     cursor_new = con_new.cursor()
+    today_date = prev_date
     table_new = "real_estate_" + today_date
+    
     
     # cursor_new.execute("drop table if exists " + table_new) # create this
     # cursor_new.execute("create table " + table_new + "(price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price)") # create this
@@ -137,7 +140,7 @@ def extract_and_store_data():
         saved_link.append(row[13])
 
     url ='https://www.zillow.com/homes/for_sale/gainesville-fl/'
-    url ='https://www.zillow.com/gainesville-fl/8_p/'
+    # url ='https://www.zillow.com/gainesville-fl/8_p/'
     soup = url_opener(url)
     if soup != None:
         pages = []
@@ -154,7 +157,12 @@ def extract_and_store_data():
             soup = url_opener(url_pg)
             for element in soup.find_all(class_='list-card'):
                 house_url = element.find("a", class_='list-card-link')
-                house_url = house_url['href']
+                try: 
+                    house_url = house_url['href']
+                except TypeError:
+                    print('URL not found')
+                    print(house_url)
+                    break
                 price = element.select_one('.list-card-price').text
                 price, est = price2data(price)
                 new_price = price
