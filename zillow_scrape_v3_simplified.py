@@ -108,7 +108,8 @@ def extract_and_store_data():
     saved_link = []
     saved_price= []
     saved_price_change = []
-    today_date = str(datetime.date.today()).replace('-','')
+    # today_date = str(datetime.date.today()).replace('-','')
+    today_date = str(datetime.date.today() + datetime.timedelta(days = 1)).replace('-','')
     
     i = 0
     con = sqlite3.connect("D:/Database/real_estate_database.db")
@@ -136,6 +137,7 @@ def extract_and_store_data():
 
     url ='https://www.zillow.com/homes/for_sale/gainesville-fl/'
     soup = url_opener(url)
+    time.sleep(random.random()*10+random.random()*(random.random()))
     if soup != None:
         pages = []
         current_pg = 'invalid'
@@ -150,108 +152,54 @@ def extract_and_store_data():
             url_pg = url + current_pg
             pages.append(url_pg)
             soup = url_opener(url_pg)
-            for element in soup.find_all(class_='list-card'):
+            for element in soup.find_all(class_='list-card-info'):
+                print('----------------new------------')
+                # print(element)
                 house_url = element.find("a", class_='list-card-link')
-                # print(house_url)
-                try:
+                if house_url != None:
                     house_url = house_url['href']
-                except TypeError:
-                    print('URL not found')
                     print(house_url)
-                    break
-                # house_url = house_url['href']
-                price = element.select_one('.list-card-price').text
-                price, est = price2data(price)
-                new_price = price
-                details = element.select_one('.list-card-details').text
-                if house_url in saved_link:
-                    j = saved_link.index(house_url)
-                    last_price_change = ''
-                    if int(new_price) == int(saved_price[j]):
-                        prev_price = rows[j][15]
-                        last_price_change = rows[j][14]
+                    price = element.select_one('.list-card-price').text
+                    price, est = price2data(price)
+                    new_price = price
+                    details = element.select_one('.list-card-details').text
+                    if house_url in saved_link:
+                        j = saved_link.index(house_url)
+                        last_price_change = ''
+                        if int(new_price) == int(saved_price[j]):
+                            prev_price = rows[j][15]
+                            last_price_change = rows[j][14]
+                        else:
+                            # j=j+1
+                            print("price updated for row id " + str(j+1))
+                            prev_price = saved_price[j]
+                            last_price_change = today_date
+                            bds = rows[j][1]
+                            ba = rows[j][2]
+                            sqft = rows[j][3]
+                            acres = rows[j][4]
+                            est = rows[j][5]
+                            property = rows[j][6]
+                            type = rows[j][7]
+                            year = rows[j][8]
+                            heating = rows[j][9]
+                            cooling = rows[j][10]
+                            parking = rows[j][11]
+                            hoa = rows[j][12]
                     else:
-                        # j=j+1
-                        print("price updated for row id " + str(j+1))
-                        prev_price = saved_price[j]
-                        last_price_change = today_date
-                    bds = rows[j][1]
-                    ba = rows[j][2]
-                    sqft = rows[j][3]
-                    acres = rows[j][4]
-                    est = rows[j][5]
-                    property = rows[j][6]
-                    type = rows[j][7]
-                    year = rows[j][8]
-                    heating = rows[j][9]
-                    cooling = rows[j][10]
-                    parking = rows[j][11]
-                    hoa = rows[j][12]
-                else:
-                    bds, ba, sqft, acres, property = detailstr2data(details)
-                    if est == True:
-                        est = 'Estimate'
-                    else:
-                        est = ''
-                    time.sleep(random.random()*10+random.random()*(random.random()*10))
-                    try:
-                        soup_house = url_opener(house_url)
-                        soup_house = soup_house.find("ul", class_='ds-home-fact-list')
-                        soup_house = soup_house.find_all("li")
-                    except:
-                        print('URL error for:')
-                        print(house_url)
-                        # break
-                    type, year, heating, cooling, parking, hoa = '', '', '', '', '', 0
-                    prev_price = ''
-                    last_price_change = today_date
-                    for house_detail in soup_house:
-                        detail = house_detail.text
-                        detail_list = detail.split(':')
-                        if detail_list[0].lower() == 'type':
-                            try:
-                                type = detail_list[1]
-                            except ValueError:
-                                type = ''
-                        elif detail_list[0].lower() == 'year built':
-                            try:
-                                year = int(detail_list[1])
-                            except ValueError:
-                                year = ''
-                        elif detail_list[0].lower() == 'heating':
-                            try:
-                                heating = detail_list[1]
-                            except ValueError:
-                                heating = ''
-                        elif detail_list[0].lower() == 'cooling':
-                            try:
-                                cooling = detail_list[1]
-                            except ValueError:
-                                cooling = ''
-                        elif detail_list[0].lower() == 'parking':
-                            try:
-                                parking = detail_list[1]
-                            except ValueError:
-                                parking = ''
-                        elif detail_list[0].lower() == 'hoa':
-                            try:
-                                hoa = detail_list[1].replace('$','').replace(',','')
-                                hoa = hoa.lower()
-                                if 'monthly' in hoa:
-                                    hoa = float(hoa.replace('monthly',''))*12
-                                elif 'quarterly' in hoa:
-                                    hoa = float(hoa.replace('quarterly', ''))*4
-                                elif 'annually' in hoa:
-                                    hoa = float(hoa.replace('annually', ''))
-                                elif 'semi-annually' in hoa:
-                                    hoa = float(hoa.replace('semi-annually', ''))
-                                elif 'yearly' in hoa:
-                                    hoa = float(hoa.replace('yearly', ''))
-                            except ValueError:
-                                hoa = 0
-                    print(house_url)
-                cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
-                con_new.commit()  # MOVE THIS OUT OF ELSE:
+                        bds, ba, sqft, acres, property = detailstr2data(details)
+                        if est == True:
+                            est = 'Estimate'
+                        else:
+                            est = ''
+                            
+                            type, year, heating, cooling, parking, hoa = '', '', '', '', '', ''
+                            prev_price = ''
+                            last_price_change = today_date
+
+                    # break
+                    cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
+                    con_new.commit()  # MOVE THIS OUT OF ELSE:
                 # cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
                 # con_new.commit()
             next_pg = soup.find("a", attrs={"title": "Next page"})['href']
