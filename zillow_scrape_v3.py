@@ -26,11 +26,15 @@ def url_opener(url):
     # options.add_argument("--headless");
     # options.add_argument('disable-gpu')
     # options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-    time.sleep(random.random()*10 + 10**random.random())
+    time.sleep(random.random() +random.random())
     driver = webdriver.Chrome(chromedriver, options=options)
     # driver.minimize_window()
     driver.get(url)
-    time.sleep(random.random()*10)
+    # driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    for i in range(15):
+        driver.execute_script("window.scrollBy(0, 500)")
+        time.sleep(1)
+    time.sleep(random.random()*10+random.random()*10)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     if "Please verify you're a human" in soup.text:
         print("Error from Please verify you're a human")
@@ -38,7 +42,7 @@ def url_opener(url):
         time.sleep(random.random()*600)
         return None
     else:
-        time.sleep(random.random()*100*random.random()+random.random())
+        time.sleep(random.random()*random.random())
         driver.quit()
         return soup
 
@@ -81,7 +85,8 @@ def detailstr2data(detail):
         bds = 0
         detail = detail[1].split('ba')
         ba = detail [0]
-        sqft = float(detail[1].replace(',','').replace('sqft',''))
+        # sqft = float(detail[1].replace(',','').replace('sqft',''))
+        sqft = float(detail[1].split('sqft')[0])
     elif 'bd' and 'ba' and 'sqft' in detail.lower():
         property = 'house/condo'
         detail = detail.split('bd')
@@ -109,7 +114,7 @@ def extract_and_store_data():
     saved_price= []
     saved_price_change = []
     # today_date = str(datetime.date.today()).replace('-','')
-    today_date = str(datetime.date.today() + datetime.timedelta(days = 1)).replace('-','')
+    today_date = str(datetime.date.today()).replace('-','')
     
     i = 0
     con = sqlite3.connect("D:/Database/real_estate_database.db")
@@ -137,7 +142,7 @@ def extract_and_store_data():
 
     url ='https://www.zillow.com/homes/for_sale/gainesville-fl/'
     soup = url_opener(url)
-    time.sleep(random.random()*10+random.random()*(random.random()))
+    time.sleep(random.random()*10)
     if soup != None:
         pages = []
         current_pg = 'invalid'
@@ -146,14 +151,14 @@ def extract_and_store_data():
         while next_pg != current_pg:
             current_pg = next_pg
             if current_pg == '':
-                print('Page 1')
+                print('************************Page 1************************')
             else:
-                print('Page ' + str(''.join(filter(lambda i: i.isdigit(), current_pg))))
+                print('************************Page ' + str(''.join(filter(lambda i: i.isdigit(), current_pg))) + '*************************')
             url_pg = url + current_pg
             pages.append(url_pg)
             soup = url_opener(url_pg)
             for element in soup.find_all(class_='list-card-info'):
-                print('----------------new------------')
+                print('---------------------------------------------------------------')
                 # print(element)
                 house_url = element.find("a", class_='list-card-link')
                 if house_url != None:
@@ -163,6 +168,7 @@ def extract_and_store_data():
                     price, est = price2data(price)
                     new_price = price
                     details = element.select_one('.list-card-details').text
+                    print(details)
                     if house_url in saved_link:
                         j = saved_link.index(house_url)
                         last_price_change = ''
@@ -203,7 +209,6 @@ def extract_and_store_data():
                 # cursor_new.execute(sql_new, (new_price, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, house_url, last_price_change, prev_price))
                 # con_new.commit()
             next_pg = soup.find("a", attrs={"title": "Next page"})['href']
-
         print(pages)
 # url ='https://www.zillow.com/homes/gainesville_rb/'
 

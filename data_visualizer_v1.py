@@ -176,7 +176,6 @@ def update_graph():
             df2 = DataFrame(dataset_trend, columns =['Price', 'Price/sqft', 'bds', 'ba', 'sqft', 'location', 'date'])
             df2_mean_by_bds = df2[['Price', 'Price/sqft', 'bds']].groupby('bds').mean()
             df2_mean_by_location = df2[['Price', 'Price/sqft', 'location']].groupby('location').mean()
-
             if len(df2_mean_by_bds.values) > 0:
                 price_1_bds.append(df2_mean_by_bds.values[0][0])
                 price_2_bds.append(df2_mean_by_bds.values[1][0])
@@ -304,6 +303,7 @@ msg_content = Label(window, text = '', width = 100, anchor = 'w')
 msg_content.place(relx=0.1, rely=0.8)
 # SQL Data Connection
 con = sqlite3.connect("./real_estate_database_example.db")
+con = sqlite3.connect("D:/Database/real_estate_database.db")
 cursor = con.cursor()
 # Initialize Date
 today_date = datetime.date.today()
