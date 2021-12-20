@@ -3,7 +3,6 @@ import sqlite3
 from tkinter import *
 import tkinter as tk
 import datetime
-# from datetime import strptime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.dates as mdates
@@ -11,6 +10,8 @@ from tkcalendar import DateEntry
 import numpy as np
 
 def append_data(data_date):
+    # Creates a table in SQL if data exist.
+    # Append data in string format after processing the data.
     year = str(data_date.year)
     month = str('%02d' %data_date.month)
     date = str('%02d' %data_date.day)
@@ -21,12 +22,14 @@ def append_data(data_date):
     table_name = "real_estate_" + year + month + date
     cursor.execute(" select count(name) from sqlite_master where type = 'table' and name = '" + table_name + "'")
     if cursor.fetchone()[0] == 1:
+        # Create a new table in SQL
         cursor.execute("select name from sqlite_master where type='table' and name ='"
                     + table_name + "'")
         cursor.execute("select * from " + table_name)
         rows = cursor.fetchall()
         price = [int(row[0]) for row in rows]
         pricepersqft = []
+        # Combine each parameter into a list of the parameter for all properties from the list of parameters of one property.
         for row in rows:
             try:
                 pricepersqft.append(int(row[0])/float(row[3]))
@@ -49,7 +52,7 @@ def append_data(data_date):
         last_price = [row[15] for row in rows]
         location = []
         for element in link:
-            # if '-NW-' or '/NW-' in element.upper():
+            # Adding general location from the address.
             if '-NW-' in element.upper() or '/NW-' in element.upper():
                 location.append('NW')
             elif '-SW-' in element.upper() or '/SW-' in element.upper():
@@ -61,6 +64,10 @@ def append_data(data_date):
             else:
                 location.append('Unknown')
         # Data Filtration
+        # Delete if:
+        # -Price or Price/sqft is 0.
+        # -Property type is 'lot'.
+        # -Number of bedroom is 0.
         while 0 in price:
             j = price.index(0)
             del price[j], pricepersqft[j], bds[j], ba[j], sqft[j], acres[j], est[j], property[j], type[j], heating[j], cooling[j], parking[j], hoa[j], link[j], updated_on[j], last_price[j], location[j]
@@ -78,6 +85,7 @@ def append_data(data_date):
         return [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
 
 def trend(start_date, end_date):
+    # Append all data within the specified date range into a list for each parameter
     price_list = []
     pricepersqft_list = []
     bds_list = []
@@ -119,16 +127,19 @@ def trend(start_date, end_date):
         updated_on_list.append(updated_on)
         last_price_list.append(last_price)
         location_list.append(location)
-    return price_list, pricepersqft_list, bds_list, ba_list, sqft_list, acres_list, \
+    return price_list, pricepersqscrapa_list, sqft_list, acres_list, \
             est_list, property_list, type_list, year_list, heating_list, cooling_list, \
             parking_list, hoa_list, link_list, updated_on_list, last_price_list, \
             location_list, date_list
 
 def update_graph():
+    # Update graph when radio button is changed for both X and Y axes,
+    # or when graph type is toggled (bar/scatter)
     ax1.clear()
     ax1.set_xlabel(CX_sel.get())
     ax1.set_ylabel(CY_sel.get())
     if rad_sel.get().lower() == 'date':
+        # For date is selected
         if CY_sel.get() == 'Price':
             y_data = price
         elif CY_sel.get() == 'Price/sqft':
@@ -159,11 +170,11 @@ def update_graph():
         chart_type.get_tk_widget().grid(row = 1, column = 2)
 
     elif rad_sel.get().lower() == 'trend':
+        # For trend is selected
         ax1.set_xlabel('Date')
         ax1.set_ylabel(CY_sel.get())
         no_data_dates = []
         no_data_index = []
-        #  **** To do invalid data for date error implementation
         price_list, pricepersqft_list, bds_list, ba_list, sqft_list, \
         a,b,c,d,year_list,e,f,g,h,i,j,k,location_list,date_list = trend(from_date.get_date(), to_date.get_date())
 
@@ -216,8 +227,6 @@ def update_graph():
                 ax1.plot(x_data, price_NE, label = 'NE')
                 ax1.plot(x_data, price_SE, label = 'SE')
                 ax1.plot(x_data, price_SW, label = 'SW')
-                # ax1.set_ylim(min(y_data)-5000, max(y_data)+5000)
-                # ax1.set_xlim(min(x_data), max(x_data))
             elif CY_sel.get() == 'Price/sqft':
                 y_data = average_pricepersqft_list
                 ax1.plot(x_data, y_data, label = 'All', color = 'Black', linewidth = '3')
@@ -228,15 +237,16 @@ def update_graph():
 
             ax1.set_xticks(np.linspace(0, len(x_data)+5, 7))
             figure1.autofmt_xdate()
-            # plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval = 30))
             ax1.legend(bbox_to_anchor = (1,1))
             figure1.suptitle(str(from_date.get_date())+' ~ '+str(to_date.get_date()))
             chart_type = FigureCanvasTkAgg(figure1, graph_frame)
             chart_type.get_tk_widget().grid(row = 1, column = 2)
+        # Showing missing dates in the defined date range
         no_data_dates = ', '.join([str(elem) for elem in no_data_dates])
         msg_content['text'] = 'No Data for: \n'+no_data_dates
 
 def update_date():
+    # When date is changed, the graph is updated with the new date.
     global dataset, price, pricepersqft, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price, location
     date_selected = sel_date.get_date()
     price, pricepersqft, bds, ba, sqft, acres, est, property, type, year, heating, cooling, parking, hoa, link, updated_on, last_price, location = append_data(date_selected)
@@ -244,7 +254,7 @@ def update_date():
     update_graph()
 
 def axis_update(rad_graph_type, CY_sel, CX_sel):
-    # disables to select 'bar' graph type and 'sqft' as x-axis at the same time
+    # Disables to select 'bar' graph type and 'sqft' as x-axis at the same time
     CX[3].configure(state = NORMAL)
     rad_graph_bar.configure(state = NORMAL)
     if rad_graph_type.get() == 'bar':
@@ -253,7 +263,7 @@ def axis_update(rad_graph_type, CY_sel, CX_sel):
         rad_graph_bar.configure(state = DISABLED)
 
 def convert():
-    # scatter or bar
+    # Graph converted depending on graph type.
     if rad_sel.get() == 'date':
         # temp_label['text'] = 'This is temporary spot for date'
         rad_graph_scatter.grid(row = 1, column = 0)
@@ -277,7 +287,6 @@ def convert():
         CX[1].configure(state = DISABLED)
         CX[2].configure(state = DISABLED)
         CX[3].configure(state = DISABLED)
-
     axis_update(rad_graph_type, CY_sel, CX_sel)
     update_graph()
 
@@ -301,9 +310,8 @@ plot_frame.grid(column = 2, row = 2)
 # Message
 msg_content = Label(window, text = '', width = 100, anchor = 'w')
 msg_content.place(relx=0.1, rely=0.8)
-# SQL Data Connection
+# SQL Data Connection (Change to the path if not for an example)
 con = sqlite3.connect("./real_estate_database_example.db")
-con = sqlite3.connect("D:/Database/real_estate_database.db")
 cursor = con.cursor()
 # Initialize Date
 today_date = datetime.date.today()

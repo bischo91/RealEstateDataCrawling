@@ -1,23 +1,11 @@
-# Real Estate Data Crawling
+# Zillow Data Scraper
 
-<br />
 <p align="center">
-  <a href="https://github.com/bischo91/RealEstateDataCrawling">
-    <img src="images/logo.png" alt="Logo" height="80">
+  <a href="https://github.com/bischo91/RealEstateDatascraping">
+  <h3 align="center">Zillow Data Scraper</h3>
   </a>
-
-  <h3 align="center">Real Estate Data</h3>
-  <p align="center">
-    Real Estate Data 
-  </p>
 </p>
-    <!-- <br />
-    <a href="https://github.com/bischo91/RealEstateDataCrawling"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/bischo91/RealEstateDataCrawling">View Demo</a>
-    · -->
-    
+
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
@@ -51,54 +39,49 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-The goal of the project is to comprehend the trend of housing market in a specific city by visualizing data extracted from the seller's posts on Zillow website.
+The goal of the project is to comprehend the trend of housing market in a specific city by visualizing data extracted from the house sale posts on Zillow website.
 
 The project consists of three files:
 
-* Web crawling from Zillow website (zillow_scrape_v1.py)
+* Web scraping from Zillow website (zillow_scrape_v3.py)
 * Database file as an example      (real_estate_database_example.db)
 * Visualization of the database    (data_visualizer_v1.py)
 
-To obtain data, zillow_scrape_v1.py was run almost everyday since 2020/09/20. The python file was run using the Task Scheduler App. Some data are missing because CAPTCHA was triggered. This has been improved by randmoly allocating wait time between pages. However, the automation and web crawling can be further improved.
+To obtain data, zillow_scrape_v3.py was run periodically since the development of this project. The program was run using the Task Scheduler App. To avoid CAPTCHA being triggered, wait time is randmoly allocated between pages.
 
-The example database does not include all the data due to the large size of the file.
+Due to the large size of the file, the example database (real_estate_database_example.db) does not include all the data, but it contains all the sales post from 2020/09/20 to 2021/10/30 in Gainesville, FL.
 
 
 ### Built With
 
 This project is mainly built with Python.
 * [Python](https://www.python.org/)
-* [Atom](https://atom.io/)
-<!-- * [MySQL] (https://www.mysql.com/) -->
-<!-- * [ChromeDriver] (https://chromedriver.chromium.org/) -->
 
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Web crawling
-
 ### Prerequisites
 
-The program requires Python, and some Python packages.
-* BeautifulSoup
-* pandas
-* numpy
-* sqlite3
-* datetime
-* tkinter
-* tkcalendar
-* matplotlib
+The program requires [Python](https://www.python.org/), and the following Python packages.
+* beautifulsoup4 (4.9.3)
+* pandas (1.2.4)
+* numpy (1.20.2)
+* sqlite3 (2.6.0)
+* Datetime (4.3)
+* tkinter (8.6)
+* tkcalendar (1.6.1)
+* matplotlib (3.4.1)
 
 [MySQL](https://www.mysql.com/) is not required but recommended to easily visualize and manage the table.
-[ChromeDriver](https://chromedriver.chromium.org/) is necessary for web crawling when running 'zillow_scrape_v1.py'
+[ChromeDriver](https://chromedriver.chromium.org/) is necessary for web scraping when running 'zillow_scrape_v3.py'
 
 
 ### Installation
 
 There is no need for installation.
 The required files are:
-* zillow_scrape_v1.py
+* zillow_scrape_v3.py
 * data_visualizer_v1.py
 * real_estate_database_example.db
 
@@ -125,51 +108,11 @@ Date vs Trend
   The trend has a legend based on the location, or average of all.
 
 
-<!-- ROADMAP -->
-
-<!-- ## Roadmap
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues). -->
-
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Although this project is intended to be personal, any suggestion or contributions are greatly appreciated.
+Any suggestion or contributions are greatly appreciated.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
-<!-- LICENSE -->
-<!-- ## License
-Distributed under the MIT License. See `LICENSE` for more information. -->
 
 <!-- CONTACT -->
-## Contact
-
-Brian (In Sik) Cho - [bischo91@gmail.com](bischo91@gmail.com)
-
-Project Link: [https://github.com/bischo91/RealEstateDataCrawling](https://github.com/bischo91/RealEstateDataCrawling)
-
 <!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-<!-- [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png -->
