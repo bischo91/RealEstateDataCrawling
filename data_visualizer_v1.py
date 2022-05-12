@@ -127,10 +127,10 @@ def trend(start_date, end_date):
         updated_on_list.append(updated_on)
         last_price_list.append(last_price)
         location_list.append(location)
-    return price_list, pricepersqscrapa_list, sqft_list, acres_list, \
+    return price_list, pricepersqft_list, bds_list, ba_list, sqft_list, acres_list, \
             est_list, property_list, type_list, year_list, heating_list, cooling_list, \
             parking_list, hoa_list, link_list, updated_on_list, last_price_list, \
-            location_list, date_list
+            location_list,date_list
 
 def update_graph():
     # Update graph when radio button is changed for both X and Y axes,
